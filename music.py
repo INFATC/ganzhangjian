@@ -21,6 +21,9 @@ st.markdown("""
     .audio-player {
         margin-top: 15px;
     }
+    .stButton>button {
+        width: 100%;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -30,7 +33,7 @@ st.markdown("---")
 if 'ind' not in st.session_state:
     st.session_state['ind'] = 0
 
-# 歌曲数据 - 请在这里填写您的音频URL
+# 歌曲数据 - 已填入音频URL
 images = [
     {
         'url': "https://d.musicapp.migu.cn/prod/playlist-service/playListimg/402bdb81-c298-4582-b208-543920fb8b08.jpg",
@@ -40,11 +43,11 @@ images = [
         'url': "https://images.genius.com/2f9fcf00e373d592f6da1835a7638469.1000x1000x1.jpg",
         'text': '天外来物',
         'audio_url': 'https://music.163.com/song/media/outer/url?id=2759345435.mp3'
-        }, {
+    }, {
         'url': "https://n.sinaimg.cn/sinakd10117/110/w700h1010/20200728/3c5f-iwxpesx6821977.jpg",
         'text': '天后',
         'audio_url': 'https://music.163.com/song/media/outer/url?id=2636693518.mp3'
-        }]
+    }]
 
 # 创建左右两列布局
 left_col, right_col = st.columns([1, 1])
@@ -84,8 +87,6 @@ with right_col:
             lastImg()
             st.rerun()
     
-    
-    
     with btn_col2:
         if st.button("下一首 ▶▶", use_container_width=True):
             nextImg()
@@ -110,45 +111,11 @@ st.markdown("### 🔊 音频播放器")
 # 显示当前歌曲的音频播放器
 current_audio_url = images[st.session_state['ind']]['audio_url']
 
-if current_audio_url:
-    st.audio(current_audio_url, format='audio/mp3')
-else:
-    st.warning(f"请为 '{images[st.session_state['ind']]['text']}' 填写音频URL")
-    
-    # 为每首歌提供URL输入框
-    st.markdown("### 填写音频URL")
-    
-    with st.expander("点击这里填写或修改音频URL"):
-        # 为每首歌曲创建一个输入框
-        for i, song in enumerate(images):
-            col1, col2 = st.columns([1, 3])
-            with col1:
-                st.markdown(f"**{song['text']}:**")
-            with col2:
-                # 创建session_state键来存储URL
-                url_key = f"audio_url_{i}"
-                if url_key not in st.session_state:
-                    st.session_state[url_key] = song.get('audio_url', '')
-                
-                # URL输入框
-                new_url = st.text_input(
-                    f"{song['text']} 音频URL",
-                    value=st.session_state[url_key],
-                    key=f"url_input_{i}",
-                    label_visibility="collapsed"
-                )
-                
-                # 更新URL
-                if new_url != st.session_state[url_key]:
-                    st.session_state[url_key] = new_url
-                    images[i]['audio_url'] = new_url
-                    
-                    # 如果是当前歌曲，更新音频播放器
-                    if i == st.session_state['ind']:
-                        st.info(f"已更新 '{song['text']}' 的音频URL")
-        
-        if st.button("保存所有URL"):
-            st.success("音频URL已保存！刷新页面后生效。")
+# 直接显示音频播放器
+st.audio(current_audio_url, format='audio/mp3')
+
+# 添加一个简洁的当前播放信息
+st.info(f"正在播放: **{images[st.session_state['ind']]['text']}**")
 
 st.markdown("</div>", unsafe_allow_html=True)
 
